@@ -7,7 +7,7 @@ export const trackAnalytics = async (req, alias, id) => {
         const userId = id;
         const { ip = "Unknown", geolocation = {}, device = {} } = clientInfo;
 
-        let urlData = await _findOne({ customAlias: alias });
+        let urlData = await Analytics.findOne({ customAlias: alias });
 
         if (!urlData) {
             console.error(`❌ Error: No URL data found for alias: ${alias}`);
