@@ -1,20 +1,19 @@
 import { getAnalyticsByAlias, getAnalyticsByTopic, getOverallAnalyticsData } from "../services/analytics.service.js";
 
-export const getUrlAnalyticsController = async (req, res) => {
+export const getOverallAnalyticsController = async (req, res) => {
     try {
-        const userId = req.user.userId
-        const { alias } = req.params;
-        const analytics = await getAnalyticsByAlias(alias, userId);
+        const userId = req.user.userId;
+        const overallAnalytics = await getOverallAnalyticsData(userId);
 
-        if (!analytics) {
+        if (!overallAnalytics) {
             return res
                 .status(404)
-                .json({ message: "No analytics found for this short URL" });
+                .json({ message: "No analytics found for your URLs" });
         }
 
-        return res.status(200).json(analytics);
+        return res.status(200).json(overallAnalytics);
     } catch (error) {
-        console.error("Error in getUrlAnalyticsController", error);
+        console.error("Error in getOverallAnalyticsController", error);
         return res.status(500).json({ message: "Internal server error" });
     }
 };
@@ -38,20 +37,21 @@ export const getTopicAnalyticsController = async (req, res) => {
     }
 };
 
-export const getOverallAnalyticsController = async (req, res) => {
+export const getUrlAnalyticsController = async (req, res) => {
     try {
-        const userId = req.user.userId;
-        const overallAnalytics = await getOverallAnalyticsData(userId);
+        const userId = req.user.userId
+        const { alias } = req.params;
+        const analytics = await getAnalyticsByAlias(alias, userId);
 
-        if (!overallAnalytics) {
+        if (!analytics) {
             return res
-                .status(404)
-                .json({ message: "No analytics found for your URLs" });
+                .status(400)
+                .json({ message: "No analytics found for this short URL" });
         }
 
-        return res.status(200).json(overallAnalytics);
+        return res.status(200).json(analytics);
     } catch (error) {
-        console.error("Error in getOverallAnalyticsController", error);
+        console.error("Error in getUrlAnalyticsController", error);
         return res.status(500).json({ message: "Internal server error" });
     }
 };
