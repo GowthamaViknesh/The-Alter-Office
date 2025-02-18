@@ -215,7 +215,7 @@ const analyticsRouter = Router()
  *         description: Internal server error.
  */
 analyticsRouter.get("/overall", isAuthincatedToken, getOverallAnalyticsController);
-// analyticsRouter.get("/topic", isAuthincatedToken, getTopicAnalyticsController);
-// analyticsRouter.get("/:alias", isAuthincatedToken, getUrlAnalyticsController);
+analyticsRouter.get("/topic", isAuthincatedToken, getTopicAnalyticsController);
+analyticsRouter.get("/:alias", isAuthincatedToken, getUrlAnalyticsController);
 
 export default analyticsRouter
