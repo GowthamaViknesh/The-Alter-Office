@@ -113,14 +113,14 @@ export const trackClick = async (shortUrl) => {
         const cacheKey = `clicks:${shortUrl}`;
 
         const newClickCount = await redisClient.incr(cacheKey);
-        console.log(`✅ Click count updated for ${shortUrl}: ${newClickCount}`);
+        console.log(`Click count updated for ${shortUrl}: ${newClickCount}`);
 
         if (newClickCount % 1 === 0) {
             await updateClickCount(shortUrl);
-            console.log(`🔄 Database updated for ${shortUrl}.`);
+            console.log(`Database updated for ${shortUrl}.`);
         }
     } catch (err) {
-        console.error("❌ Error incrementing click count:", err);
+        console.error("Error incrementing click count:", err);
     }
 };
 
@@ -144,10 +144,10 @@ export const redirectOriginalUrlController = async (req, res) => {
         console.timeEnd("Redis Lookup Time");
 
         if (cachedUrl) {
-            console.log("🟢 Cache hit: Redirecting to cached URL");
+            console.log("Cache hit: Redirecting to cached URL");
             console.time("Track Click Time");
             await trackClick(alias);
-            await trackAnalytics(req, alias, userData._id);
+            await trackAnalytics(req, alias, userData.userId);
             console.timeEnd("Track Click Time");
             return res.status(200).redirect(cachedUrl);
         }
@@ -158,14 +158,14 @@ export const redirectOriginalUrlController = async (req, res) => {
         }
 
         await redisClient.setEx(cacheKey, 3600, outputData.longUrl);
-        console.log("🔵 Cache miss: Fetched from DB and stored in Redis");
+        console.log("Cache miss: Fetched from DB and stored in Redis");
 
         await trackClick(alias);
         await trackAnalytics(req, alias, userData._id);
 
         return res.status(200).redirect(outputData.longUrl);
     } catch (error) {
-        console.error("❌ Error in redirectOriginalUrlController:", error);
+        console.error("Error in redirectOriginalUrlController:", error);
         return res.status(500).json({ message: "Internal server error" });
     }
 };

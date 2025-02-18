@@ -14,14 +14,14 @@ const redisClient = redis.createClient({
 (async () => {
     try {
         await redisClient.connect();
-        console.log("✅ Connected to Redis");
+        console.log("Connected to Redis on port: 6379");
     } catch (err) {
-        console.error("❌ Redis Connection Error:", err);
+        console.error("Redis Connection Error:", err);
     }
 })();
 
 redisClient.on("error", (err) => {
-    console.error("❌ Redis Error:", err);
+    console.error("Redis Error:", err);
 });
 
 export default redisClient

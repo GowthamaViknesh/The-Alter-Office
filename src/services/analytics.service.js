@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Analytics from "../models/analytics.model.js"
+import ShortUrl from "../models/url.model.js"
 
 export const trackAnalytics = async (req, alias, id) => {
     try {
@@ -7,17 +8,17 @@ export const trackAnalytics = async (req, alias, id) => {
         const userId = id;
         const { ip = "Unknown", geolocation = {}, device = {} } = clientInfo;
 
-        let urlData = await Analytics.findOne({ customAlias: alias });
+        let urlData = await ShortUrl.findOne({ customAlias: alias });
 
         if (!urlData) {
-            console.error(`❌ Error: No URL data found for alias: ${alias}`);
+            console.error(`Error: No URL data found for alias: ${alias}`);
             return;
         }
 
         let analytics = await Analytics.findOne({ shortUrl: alias });
 
         if (!analytics) {
-            analytics = await create({
+            analytics = await Analytics.create({
                 shortUrl: alias,
                 topic: urlData.topic || "Unknown",
                 totalClicks: 1,
@@ -93,7 +94,7 @@ export const trackAnalytics = async (req, alias, id) => {
             await analytics.save();
         }
     } catch (error) {
-        console.error("❌ Error tracking analytics:", error);
+        console.error("Error tracking analytics:", error);
     }
 };
 
@@ -117,14 +118,15 @@ export const getAnalyticsByTopic = async (topic, userId) => {
 };
 
 export const getOverallAnalyticsData = async (userId) => {
-    if (!userId) {
-        console.error("Invalid userId provided");
-        return { error: "User ID is required" };
+    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+        console.error("Invalid userId provided:", userId);
+        return { error: "User ID is required and must be a valid ObjectId" };
     }
-
     try {
-        const objectId = new mongoose.Types.ObjectId(userId);
-        const analytics = await Analytics.find({ userId: objectId });
+        const objectId = new mongoose.Types.ObjectId(userId.trim());
+        const analytics = await Analytics.find({
+            $or: [{ userId: objectId }, { userId: userId.toString() }]
+        });
         return {
             totalUrls: analytics.length,
             totalClicks: analytics.reduce((sum, a) => sum + (a.totalClicks || 0), 0),
@@ -134,7 +136,7 @@ export const getOverallAnalyticsData = async (userId) => {
             deviceType: analytics.flatMap((a) => a.deviceType || []),
         };
     } catch (error) {
-        console.error("Error fetching overall analytics data:", error);
+        console.error("Error fetching overall analytics data:", error.stack);
         return { error: "Internal server error" };
     }
 };

@@ -97,12 +97,12 @@ export const updateClickCount = async (alias) => {
         );
 
         if (updatedUrl) {
-            console.log(`🔄 Database updated: ${updatedUrl.shortUrl} has ${updatedUrl.clicks} clicks.`);
+            console.log(`Database updated: ${updatedUrl.shortUrl} has ${updatedUrl.clicks} clicks.`);
         } else {
-            console.error("❌ URL not found in database");
+            console.error("URL not found in database");
         }
     } catch (err) {
-        console.error("❌ Error updating click count in database:", err);
+        console.error("Error updating click count in database:", err);
     }
 };
 
