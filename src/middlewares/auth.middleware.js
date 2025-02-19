@@ -12,7 +12,6 @@ export const isAuthincatedToken = (req, res, next) => {
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        console.log("⛔ No or invalid Authorization header found:", authHeader);
         return res.status(401).json({ message: "Access Denied: No token provided" });
     }
 
@@ -20,7 +19,6 @@ export const isAuthincatedToken = (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        console.log("✅ Token decoded successfully:", decoded);
 
         req.user = { userId: decoded.userId };
         next();
