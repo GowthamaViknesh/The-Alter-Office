@@ -23,7 +23,7 @@ const __dirname = path.dirname(__filename);
 
 dotenv.config();
 const app = express();
-const PORT = process.env.PORT || 4123;
+const PORT = 4123;
 
 const redisStore = new RedisStore({
     client: redisClient,
