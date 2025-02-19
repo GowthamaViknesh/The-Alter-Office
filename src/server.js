@@ -31,8 +31,14 @@ const redisStore = new RedisStore({
 })
 
 app.use(express.json());
-app.use(cors({ origin: "*" }));
-app.use(cookieParser());
+app.use(
+    cors({
+        origin: "https://clickbiteshort.netlify.app",
+        credentials: true,
+        allowedHeaders: ["Content-Type", "Authorization"],
+        methods: ["GET", "POST", "PUT", "DELETE"],
+    })
+); app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 app.use(useragent.express());
 connectDb()
