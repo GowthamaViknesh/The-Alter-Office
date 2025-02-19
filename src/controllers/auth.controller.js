@@ -23,7 +23,7 @@ export const handleCallback = async (req, res) => {
     const data = await findOrCreateUser(payload)
 
 
-    res.redirect(`http://localhost:5173/auth?token=${data.token}`);
+    res.redirect(`https://clickbiteshort.netlify.app/auth?token=${data.token}`);
 };
 
 export const getProfile = async (req, res) => {
