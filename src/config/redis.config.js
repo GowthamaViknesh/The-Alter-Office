@@ -9,7 +9,9 @@ const redisClient = redis.createClient({
     //     port: process.env.REDIS_PORT,
     // },
     // database: process.env.REDIS_DB
-    url: process.env.REDIS_HOST
+    url: process.env.NODE_ENV === 'production'
+        ? process.env.REDIS_HOST
+        : 'redis://127.0.0.1:6379'
 });
 
 (async () => {

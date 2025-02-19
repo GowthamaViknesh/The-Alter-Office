@@ -5,6 +5,7 @@ import express from "express"
 import session from "express-session"
 import cookieParser from "cookie-parser"
 import useragent from "express-useragent"
+import { RedisStore } from "connect-redis"
 import { fileURLToPath } from "url";
 
 
@@ -15,6 +16,7 @@ import passport from "../src/config/passport.config.js"
 import urlRouter from "./routes/url.routes.js"
 import authRoutes from "./routes/auth.routes.js"
 import analyticsRouter from "./routes/analytics.routes.js"
+import redisClient from "./config/redis.config.js"
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -23,19 +25,28 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 4123;
 
+const redisStore = new RedisStore({
+    client: redisClient,
+    prefix: "myapp:",
+})
+
 app.use(express.json());
 app.use(cors({ origin: "*" }));
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 app.use(useragent.express());
 connectDb()
-app.use(
-    session({
-        secret: "secret",
-        resave: false,
-        saveUninitialized: true,
-    })
-);
+app.use(session({
+    store: redisStore,
+    secret: process.env.SESSION_SECRET || 'gowthamSecrt',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: process.env.NODE_ENV === 'production',
+        httpOnly: true,
+        maxAge: 1000 * 60 * 60 * 24
+    }
+}));
 
 app.use(passport.initialize());
 app.use(passport.session());
