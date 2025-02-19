@@ -20,7 +20,7 @@ export const handleCallback = async (req, res) => {
         verifiedEmail: req.user._json.email_verified,
     };
     const data = await findOrCreateUser(payload)
-    res.redirect(`https://clickbiteshort.netlify.app/auth?token=${data.token}`);
+    res.redirect(`https://clickbiteshort.netlify.app/?token=${data.token}`);
 };
 
 export const getProfile = async (req, res) => {
