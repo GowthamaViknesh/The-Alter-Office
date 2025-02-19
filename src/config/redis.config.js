@@ -4,11 +4,12 @@ import dotenv from "dotenv"
 dotenv.config();
 
 const redisClient = redis.createClient({
-    socket: {
-        host: process.env.REDIS_HOST,
-        port: process.env.REDIS_PORT,
-    },
-    database: process.env.REDIS_DB
+    // socket: {
+    //     host: process.env.REDIS_HOST,
+    //     port: process.env.REDIS_PORT,
+    // },
+    // database: process.env.REDIS_DB
+    url: process.env.REDIS_HOST
 });
 
 (async () => {
