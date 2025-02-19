@@ -19,10 +19,7 @@ export const handleCallback = async (req, res) => {
         picture: req.user._json.picture,
         verifiedEmail: req.user._json.email_verified,
     };
-
     const data = await findOrCreateUser(payload)
-
-
     res.redirect(`https://clickbiteshort.netlify.app/auth?token=${data.token}`);
 };
 
